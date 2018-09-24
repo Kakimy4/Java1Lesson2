@@ -135,4 +135,3 @@ public class Java1Lesson3 {
         return a;
     }
 }
-
