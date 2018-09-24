@@ -1,10 +1,17 @@
+/**
+ * Java Level 1. Lesson 4. Java1Lesson4TicTacToe
+ *
+ * @version dated sept 24 09 2018
+ * @autor Durasov Maxim
+ */
+
 import java.util.Random;
 import java.util.Scanner;
 
 public class Java1Lesson4TicTacToe {
-    final int SIZE = 3;
-    final char DOT_X = 'x';
-    final char DOT_O = 'o';
+    final int SIZE = 4;
+    final char DOT_X = 'X';
+    final char DOT_O = 'O';
     final char DOT_EMPTY = '.';
     char[][] map = new char[SIZE][SIZE];
     Scanner sc = new Scanner(System.in);
@@ -18,8 +25,9 @@ public class Java1Lesson4TicTacToe {
         initMap();
         while (true) {
             humanTurn();
-            if (checkWin(DOT_X)) {
-                System.out.println("YOU WON");
+            if (checkWinShort(DOT_X)) {
+                System.out.println("\nYOU WON \n");
+                printMap();
                 break;
             }
             if (isMapFull()) {
@@ -28,8 +36,9 @@ public class Java1Lesson4TicTacToe {
             }
             aiTurn();
             printMap();
-            if (checkWin(DOT_O)) {
-                System.out.println("PC WON");
+            if (checkWinShort(DOT_O)) {
+                System.out.println("\nPC WON\n");
+                printMap();
                 break;
             }
             if (isMapFull()) {
@@ -39,15 +48,22 @@ public class Java1Lesson4TicTacToe {
         }
     }
 
-
     void humanTurn() {
         int x, y;
         do {
-            System.out.println("Enter X & Y (1.3)");
+            System.out.println("Enter X & Y (1.." + SIZE + ")");
             x = sc.nextInt() - 1;
             y = sc.nextInt() - 1;
-        } while (!isCellValid(x, y));
+        } while (!isCellValid(x, y) || isCellFree(x, y));
         map[x][y] = DOT_X;
+    }
+
+    private boolean isCellFree(int x, int y) {
+        if (map[x][y] != DOT_EMPTY) ;
+        {
+            System.out.println("This cell is use. Enter other cell.\n");
+            return false;
+        }
     }
 
     void aiTurn() {
@@ -57,21 +73,22 @@ public class Java1Lesson4TicTacToe {
             y = rand.nextInt(SIZE);
         } while (!isCellValid(x, y));
         map[x][y] = DOT_O;
-
     }
 
-    boolean checkWin(char dot) {
+    boolean checkWinShort(char dot) {
         // check horizont
-        if (map[0][0] == dot && map[0][1] == dot && map[0][2] == dot) return true;
-        if (map[1][0] == dot && map[1][1] == dot && map[1][2] == dot) return true;
-        if (map[2][0] == dot && map[2][1] == dot && map[2][2] == dot) return true;
-        // check vertical
-        if (map[0][0] == dot && map[1][0] == dot && map[2][0] == dot) return true;
-        if (map[0][1] == dot && map[1][1] == dot && map[2][1] == dot) return true;
-        if (map[0][2] == dot && map[1][2] == dot && map[2][2] == dot) return true;
-        // check diagonal
-        if (map[0][0] == dot && map[1][1] == dot && map[2][2] == dot) return true;
-        if (map[0][2] == dot && map[1][1] == dot && map[2][0] == dot) return true;
+        int dl = 0, dr = 0, hor = 0, vert = 0;
+        for (int a = 0; a < SIZE; a++) {
+            for (int b = 0; b < SIZE; b++) {
+                if (map[b][b] == dot && a == b) dl++;             // Проверка основной диагонали
+                if (map[b][SIZE - b - 1] == dot && a == b) dr++;  // Проверка обратной диагонали
+                if (map[a][b] == dot) hor++;                      // Проверка горизонталей
+                if (map[b][a] == dot) vert++;                     // Проверка вертикалей
+                if (SIZE > 3) if (dl >= SIZE - 1 || dr >= SIZE - 1 || hor >= SIZE - 1 || vert >= SIZE - 1) return true;
+                if (SIZE == 3) if (dl == SIZE || dr == SIZE || hor == SIZE || vert == SIZE) return true;
+            }
+            hor = vert = 0;
+        }
         return false;
     }
 
@@ -86,9 +103,11 @@ public class Java1Lesson4TicTacToe {
     }
 
     boolean isCellValid(int x, int y) {
-        if (x < 0 || y < 0 || x >= SIZE || y >= SIZE)
+        if (x < 0 || y < 0 || x >= SIZE || y >= SIZE) {
+            System.out.println("Check other cell from valid range");
             return false;
-        return map[x][y] == DOT_EMPTY;
+        }
+        return true;
     }
 
     void printMap() {
