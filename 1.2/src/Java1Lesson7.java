@@ -146,3 +146,4 @@ class Dog extends Animal {
         totalJump = 5 + rand.nextInt(6);        // Dog can jump from 5 to 10 meters
     }
 }
+
